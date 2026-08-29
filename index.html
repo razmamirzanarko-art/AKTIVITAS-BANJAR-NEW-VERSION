@@ -14,7 +14,6 @@
 <body class="bg-slate-50 text-slate-800 pb-12">
     <!-- Header -->
     <header class="bg-gradient-to-r from-violet-900 to-indigo-800 text-white p-6 rounded-b-3xl shadow-lg relative">
-        <!-- Teks By Razma Mirzanarko di tengah atas kecil -->
         <div class="text-center mb-3">
             <span class="text-[10px] text-violet-200 tracking-widest uppercase font-medium">By Razma Mirzanarko</span>
         </div>
@@ -68,7 +67,7 @@
             </div>
         </div>
 
-        <!-- Filter Data (Sudah termasuk Filter Tanggal) -->
+        <!-- Filter Data -->
         <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-100 space-y-3">
             <div class="flex justify-between items-center text-xs font-bold text-slate-400 uppercase tracking-wider">
                 <span>Filter Data</span>
@@ -76,10 +75,8 @@
             </div>
             <h3 class="font-bold text-slate-800 text-lg">Temukan aktivitas</h3>
             
-            <!-- Input Keyword Pencarian -->
             <input type="text" id="cari-keyword" placeholder="Mitra, majelis, ID loan, nama..." oninput="filterData()" class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl text-sm outline-none focus:border-violet-600">
             
-            <!-- Input Filter Tanggal (Baru ditambahkan kembali) -->
             <div>
                 <label class="text-[11px] font-semibold text-slate-500 mb-1 block">Filter Berdasarkan Tanggal:</label>
                 <input type="date" id="filter-tanggal" onchange="filterData()" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-700 outline-none focus:border-violet-600">
@@ -96,7 +93,7 @@
             <button onclick="resetFilter()" class="text-xs text-slate-500 hover:text-violet-700 font-medium pt-1">✕ Bersihkan filter</button>
         </div>
 
-        <!-- Aktivitas Per Cabang (Grafik Bergerak) -->
+        <!-- Aktivitas Per Cabang -->
         <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-100">
             <div class="flex justify-between items-center mb-3">
                 <p class="text-xs font-bold text-slate-400 uppercase">Grafik Ringkasan</p>
@@ -437,10 +434,34 @@
             }
         }
 
+        function normalisasiTanggal(tglStr) {
+            if (!tglStr) return "";
+            let s = tglStr.toString().trim().substring(0, 10);
+            // Ubah format DD/MM/YYYY atau format lain menjadi YYYY-MM-DD agar seragam
+            if (s.includes('/')) {
+                let parts = s.split('/');
+                if (parts.length === 3) {
+                    if (parts[0].length === 4) {
+                        return `${parts[0]}-${parts[1]}-${parts[2]}`; // YYYY/MM/DD
+                    } else {
+                        return `${parts[2]}-${parts[1]}-${parts[0]}`; // DD/MM/YYYY -> YYYY-MM-DD
+                    }
+                }
+            }
+            return s;
+        }
+
         function tampilkanUI(data) {
             document.getElementById('stat-total').innerText = data.length;
-            const hariIni = new Date().toISOString().substring(0, 10);
-            const totalHariIni = data.filter(d => d.tanggal === hariIni).length;
+            
+            // Hitung aktivitas hari ini secara akurat dengan normalisasi format tanggal
+            const now = new Date();
+            const year = now.getFullYear();
+            const month = String(now.getMonth() + 1).padStart(2, '0');
+            const day = String(now.getDate()).padStart(2, '0');
+            const hariIni = `${year}-${month}-${day}`;
+
+            const totalHariIni = data.filter(d => normalisasiTanggal(d.tanggal) === hariIni).length;
             document.getElementById('stat-hari-ini').innerText = totalHariIni;
 
             const cabangUnik = [...new Set(data.map(d => d.cabang).filter(Boolean))];
@@ -533,15 +554,20 @@
 
         function filterData() {
             const keyword = document.getElementById('cari-keyword').value.toLowerCase();
-            const tgl = document.getElementById('filter-tanggal').value; // Ambil nilai filter tanggal
+            const tglFilter = document.getElementById('filter-tanggal').value; // Format input date: YYYY-MM-DD
             const cabang = document.getElementById('filter-cabang').value;
             const karyawan = document.getElementById('filter-karyawan').value;
 
             let filtered = semuaDataAktivitas.filter(d => {
                 let matchKeyword = (d.namaMitra + d.namaMajelis + d.idLoan + d.keterangan + d.karyawan + d.jenisAktivitas).toLowerCase().includes(keyword);
-                let matchTanggal = tgl === "" || d.tanggal === tgl; // Logika filter tanggal
+                
+                // Perbandingan tanggal yang sudah dinormalisasi agar aman dari perbedaan format
+                let tglDataNorm = normalisasiTanggal(d.tanggal);
+                let matchTanggal = tglFilter === "" || tglDataNorm === tglFilter;
+
                 let matchCabang = cabang === "" || d.cabang === cabang;
                 let matchKaryawan = karyawan === "" || d.karyawan === karyawan;
+                
                 return matchKeyword && matchTanggal && matchCabang && matchKaryawan;
             });
 
@@ -550,7 +576,7 @@
 
         function resetFilter() {
             document.getElementById('cari-keyword').value = "";
-            document.getElementById('filter-tanggal').value = ""; // Reset tanggal
+            document.getElementById('filter-tanggal').value = "";
             document.getElementById('filter-cabang').value = "";
             document.getElementById('filter-karyawan').value = "";
             tampilkanUI(semuaDataAktivitas);
@@ -562,4 +588,3 @@
     </script>
 </body>
 </html>
-              
