@@ -15,7 +15,7 @@
     <header class="bg-gradient-to-r from-violet-900 to-indigo-800 text-white p-6 rounded-b-3xl shadow-lg">
         <div class="flex justify-between items-center mb-6">
             <h1 class="text-xl font-bold">Aktivitas Area Banjar</h1>
-            <button onclick="bukaForm()" class="bg-white/20 p-2.5 rounded-full hover:bg-white/30 transition shadow-inner">
+            <button onclick="bukaForm()" class="bg-white/20 p-2.5 rounded-full hover:bg-white/30 transition shadow-inner flex items-center justify-center">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
                 </svg>
@@ -70,7 +70,7 @@
             </div>
             <h3 class="font-bold text-slate-800 text-lg">Temukan aktivitas</h3>
             
-            <input type="text" id="cari-keyword" placeholder="Mitra, majelis, ID loan..." oninput="filterData()" class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl text-sm outline-none focus:border-violet-600">
+            <input type="text" id="cari-keyword" placeholder="Mitra, majelis, ID loan, nama..." oninput="filterData()" class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl text-sm outline-none focus:border-violet-600">
             
             <div class="grid grid-cols-2 gap-2">
                 <select id="filter-cabang" onchange="filterData()" class="p-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-600">
@@ -214,19 +214,19 @@
                 <div>
                     <label class="text-xs font-semibold text-slate-600">Lokasi GPS (Otomatis)</label>
                     <div class="flex gap-2 mt-1">
-                        <input type="text" id="lokasiGps" placeholder="Tekan tombol untuk ambil titik GPS" readonly class="w-full p-2.5 bg-slate-100 border rounded-xl text-xs text-slate-600">
+                        <input type="text" id="lokasiGps" placeholder="Tekan tombol ambil GPS" readonly class="w-full p-2.5 bg-slate-100 border rounded-xl text-xs text-slate-600">
                         <button type="button" onclick="ambilLokasiGps()" class="bg-violet-100 text-violet-800 px-3 py-2 rounded-xl text-xs font-bold hover:bg-violet-200 whitespace-nowrap">📍 Ambil GPS</button>
                     </div>
                 </div>
                 <div>
                     <label class="text-xs font-semibold text-slate-600">Foto kegiatan (Kamera / File)</label>
                     <input type="file" id="fotoFile" accept="image/*" capture="environment" class="w-full mt-1 p-2 text-sm bg-slate-50 border rounded-xl" onchange="kompresFoto(this)">
-                    <p class="text-[10px] text-slate-400 mt-1">*Foto akan otomatis dikompres agar mulus terkirim ke Spreadsheet.</p>
+                    <p class="text-[10px] text-slate-400 mt-1">*Foto dikompres otomatis agar mulus.</p>
                 </div>
                 <button type="submit" id="btn-submit" class="w-full bg-violet-900 text-white py-3 rounded-xl font-bold shadow-md hover:bg-violet-800 transition mt-4">Simpan aktivitas</button>
             </form>
         </div>
-    </div>
+    </main>
 
     <script>
         const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzzZlwY0NP9M_hFGmKQFCikMlMQPa6HQdZVKPVchSd227vmiq0zq8IxjIFEWBsV4-287g/exec";
@@ -257,7 +257,7 @@
                 (position) => {
                     const lat = position.coords.latitude;
                     const lng = position.coords.longitude;
-                    inputGps.value = `https://maps.google.com/?q=${lat},${lng}`;
+                    inputGps.value = https://maps.google.com/?q=${lat},${lng};
                 },
                 (error) => {
                     alert("Gagal mengambil GPS. Pastikan izin lokasi aktif.");
@@ -267,7 +267,6 @@
             );
         }
 
-        // Fungsi Kompres Foto agar tidak error / kelebihan ukuran di Spreadsheet
         function kompresFoto(input) {
             if (input.files && input.files[0]) {
                 const reader = new FileReader();
@@ -277,10 +276,8 @@
                     img.onload = function() {
                         const canvas = document.createElement('canvas');
                         const ctx = canvas.getContext('2d');
-                        
-                        // Perkecil resolusi maksimal lebar/tinggi 600px agar ringan
-                        const MAX_WIDTH = 600;
-                        const MAX_HEIGHT = 600;
+                        const MAX_WIDTH = 400;
+                        const MAX_HEIGHT = 400;
                         let width = img.width;
                         let height = img.height;
 
@@ -299,9 +296,7 @@
                         canvas.width = width;
                         canvas.height = height;
                         ctx.drawImage(img, 0, 0, width, height);
-                        
-                        // Konversi ke format kompresi JPEG kualitas 0.7
-                        base64FotoFinal = canvas.toDataURL('image/jpeg', 0.7);
+                        base64FotoFinal = canvas.toDataURL('image/jpeg', 0.6);
                     }
                 }
                 reader.readAsDataURL(input.files[0]);
@@ -349,7 +344,7 @@
         }
 
         async function muatDataGSheet() {
-            const url = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json`;
+            const url = https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json;
             try {
                 const res = await fetch(url);
                 const text = await res.text();
@@ -357,8 +352,24 @@
                 
                 semuaDataAktivitas = json.table.rows.map(row => {
                     const c = row.c;
+                    
+                    // Pembersih Format Tanggal agar rapi dan tidak error Date(...)
+                    let rawTgl = c[0]?.f || c[0]?.v || '';
+                    let tglFormatted = rawTgl;
+                    if (typeof rawTgl === 'string' && rawTgl.includes('Date')) {
+                        const match = rawTgl.match(/Date\((\d+),(\d+),(\d+)\)/);
+                        if (match) {
+                            let y = match[1];
+                            let m = String(parseInt(match[2]) + 1).padStart(2, '0');
+                            let d = String(match[3]).padStart(2, '0');
+                            tglFormatted = ${y}-${m}-${d};
+                        }
+                    } else if (typeof rawTgl === 'string' && rawTgl.length >= 10) {
+                        tglFormatted = rawTgl.substring(0, 10);
+                    }
+
                     return {
-                        tanggal: c[0]?.v ? c[0].v.substring(0, 10) : '',
+                        tanggal: tglFormatted,
                         cabang: c[1]?.v || '',
                         area: c[2]?.v || '',
                         karyawan: c[3]?.v || '',
@@ -377,7 +388,7 @@
                 isiDropdownFilter(semuaDataAktivitas);
             } catch (e) {
                 console.error("Gagal memuat data", e);
-                document.getElementById('daftar-aktivitas').innerHTML = `<p class="text-xs text-red-500 text-center py-4">Gagal memuat data dari Spreadsheet. Pastikan Spreadsheet sudah disetel publik.</p>`;
+                document.getElementById('daftar-aktivitas').innerHTML = <p class="text-xs text-red-500 text-center py-4">Gagal memuat data. Periksa koneksi atau izin spreadsheet.</p>;
             }
         }
 
@@ -393,7 +404,7 @@
             const petugasUnik = [...new Set(data.map(d => d.karyawan).filter(Boolean))];
             document.getElementById('stat-petugas').innerText = petugasUnik.length;
 
-            document.getElementById('jumlah-catatan').innerText = `${data.length} catatan ditemukan`;
+            document.getElementById('jumlah-catatan').innerText = ${data.length} catatan ditemukan;
 
             let htmlRingkasan = "";
             cabangUnik.forEach((cab, index) => {
@@ -411,55 +422,61 @@
                     </div>
                 `;
             });
-            document.getElementById('ringkasan-cabang').innerHTML = htmlRingkasan || `<p class="text-xs text-slate-400">Belum ada data cabang.</p>`;
+            document.getElementById('ringkasan-cabang').innerHTML = htmlRingkasan || <p class="text-xs text-slate-400">Belum ada data cabang.</p>;
 
             let htmlCard = "";
             data.forEach(d => {
                 let inisial = d.karyawan ? d.karyawan.substring(0, 2).toUpperCase() : "TM";
+                let formatNoHp = d.noHp ? <p>📞 <a href="tel:${d.noHp}" class="text-violet-600 font-bold underline">${d.noHp}</a></p> : '';
                 
-                // Perbaikan Nomor HP agar bisa diklik otomatis (tel:)
-                let formatNoHp = d.noHp ? `<p>📞 <a href="tel:${d.noHp}" class="text-violet-600 font-bold underline">${d.noHp}</a></p>` : '';
+                // Judul kartu diprioritaskan Nama Mitra, jika kosong pakai Nama Majelis, jika kosong pakai Jenis Aktivitas
+                let judulUtama = d.namaMitra || d.namaMajelis || d.jenisAktivitas || 'Aktivitas Lapangan';
 
                 htmlCard += `
-                    <div class="bg-slate-50 border border-slate-100 p-4 rounded-2xl flex justify-between items-start space-x-3">
-                        <div class="space-y-2 flex-1">
+                    <div class="bg-white border border-slate-200/80 p-4 rounded-2xl shadow-sm space-y-3">
+                        <div class="flex justify-between items-start">
                             <div class="flex items-center space-x-2">
-                                <div class="w-8 h-8 rounded-full bg-violet-100 text-violet-800 font-bold text-xs flex items-center justify-center">${inisial}</div>
+                                <div class="w-9 h-9 rounded-full bg-violet-100 text-violet-800 font-bold text-xs flex items-center justify-center flex-shrink-0">${inisial}</div>
                                 <div>
-                                    <p class="text-[10px] text-slate-400">${d.tanggal}</p>
-                                    <span class="inline-block bg-violet-100 text-violet-800 text-[10px] font-bold px-2 py-0.5 rounded-md mt-0.5">${d.jenisAktivitas || 'Aktivitas'}</span>
+                                    <p class="text-[11px] font-semibold text-slate-700">${d.karyawan || 'Tanpa Nama'}</p>
+                                    <p class="text-[10px] text-slate-400">📅 ${d.tanggal || '-'}</p>
                                 </div>
                             </div>
-                            <h4 class="font-bold text-slate-800 text-base">${d.namaMitra || d.namaMajelis || 'Aktivitas Lapangan'}</h4>
-                            <div class="text-xs text-slate-500 space-y-0.5">
-                                <p>🏢 ${d.cabang} • 👤 ${d.karyawan}</p>
-                                ${d.area ? `<p>📍 ${d.area}</p>` : ''}
-                                ${d.idLoan ? `<p>💳 ID Loan: ${d.idLoan}</p>` : ''}
-                                ${d.namaMajelis ? `<p>🏠 Majelis: ${d.namaMajelis}</p>` : ''}
-                                ${d.keterangan ? `<p class="italic text-slate-600">"${d.keterangan}"</p>` : ''}
-                                ${formatNoHp}
-                                ${d.lokasiGps ? `<p><a href="${d.lokasiGps}" target="_blank" class="text-violet-600 underline font-medium">Lihat Lokasi GPS</a></p>` : ''}
-                            </div>
+                            <span class="bg-violet-50 text-violet-700 text-[10px] font-bold px-2.5 py-1 rounded-lg border border-violet-100">${d.jenisAktivitas || 'Umum'}</span>
                         </div>
-                        <div class="w-20 h-20 bg-slate-200 rounded-xl overflow-hidden flex-shrink-0 border border-slate-300">
-                            ${d.fotoUrl ? `<img src="${d.fotoUrl}" class="w-full h-full object-cover">` : `<div class="w-full h-full flex items-center justify-center text-[10px] text-slate-400 text-center">No Photo</div>`}
+
+                        <div class="bg-slate-50 p-3 rounded-xl border border-slate-100 flex justify-between items-center gap-3">
+                            <div class="space-y-1 overflow-hidden">
+                                <h4 class="font-bold text-slate-800 text-sm truncate">${judulUtama}</h4>
+                                <div class="text-[11px] text-slate-500 space-y-0.5">
+                                    <p class="truncate">🏢 Cabang: <span class="font-medium text-slate-700">${d.cabang || '-'}</span> ${d.area ? • Area: ${d.area} : ''}</p>
+                                    ${d.idLoan ? <p>💳 ID Loan: <span class="font-medium text-slate-700">${d.idLoan}</span></p> : ''}
+                                    ${d.namaMajelis ? <p class="truncate">🏠 Majelis: ${d.namaMajelis}</p> : ''}
+                                    ${d.keterangan ? <p class="italic text-slate-600">"${d.keterangan}"</p> : ''}
+                                    ${formatNoHp}
+                                    ${d.lokasiGps ? <p class="pt-1"><a href="${d.lokasiGps}" target="_blank" class="text-violet-600 underline font-semibold flex items-center gap-1">📍 Buka Titik Lokasi GPS</a></p> : ''}
+                                </div>
+                            </div>
+                            <div class="w-20 h-20 bg-slate-200 rounded-xl overflow-hidden flex-shrink-0 border border-slate-200 shadow-inner">
+                                ${d.fotoUrl ? <img src="${d.fotoUrl}" class="w-full h-full object-cover"> : <div class="w-full h-full flex items-center justify-center text-[10px] text-slate-400 text-center p-1">No Photo</div>}
+                            </div>
                         </div>
                     </div>
                 `;
             });
-            document.getElementById('daftar-aktivitas').innerHTML = htmlCard || `<p class="text-xs text-slate-400 text-center py-6">Tidak ada catatan ditemukan.</p>`;
+            document.getElementById('daftar-aktivitas').innerHTML = htmlCard || <p class="text-xs text-slate-400 text-center py-6">Tidak ada catatan ditemukan.</p>;
         }
 
         function isiDropdownFilter(data) {
             const cabangUnik = [...new Set(data.map(d => d.cabang).filter(Boolean))];
             const karyawanUnik = [...new Set(data.map(d => d.karyawan).filter(Boolean))];
 
-            let optCabang = `<option value="">Semua cabang</option>`;
-            cabangUnik.forEach(c => optCabang += `<option value="${c}">${c}</option>`);
+            let optCabang = <option value="">Semua cabang</option>;
+            cabangUnik.forEach(c => optCabang += <option value="${c}">${c}</option>);
             document.getElementById('filter-cabang').innerHTML = optCabang;
 
-            let optKaryawan = `<option value="">Semua nama</option>`;
-            karyawanUnik.forEach(k => optKaryawan += `<option value="${k}">${k}</option>`);
+            let optKaryawan = <option value="">Semua nama</option>;
+            karyawanUnik.forEach(k => optKaryawan += <option value="${k}">${k}</option>);
             document.getElementById('filter-karyawan').innerHTML = optKaryawan;
         }
 
@@ -469,7 +486,7 @@
             const karyawan = document.getElementById('filter-karyawan').value;
 
             let filtered = semuaDataAktivitas.filter(d => {
-                let matchKeyword = (d.namaMitra + d.namaMajelis + d.idLoan + d.keterangan + d.karyawan).toLowerCase().includes(keyword);
+                let matchKeyword = (d.namaMitra + d.namaMajelis + d.idLoan + d.keterangan + d.karyawan + d.jenisAktivitas).toLowerCase().includes(keyword);
                 let matchCabang = cabang === "" || d.cabang === cabang;
                 let matchKaryawan = karyawan === "" || d.karyawan === karyawan;
                 return matchKeyword && matchCabang && matchKaryawan;
@@ -491,4 +508,3 @@
     </script>
 </body>
 </html>
-                   
