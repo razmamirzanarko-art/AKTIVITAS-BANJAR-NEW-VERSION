@@ -257,7 +257,7 @@
                 (position) => {
                     const lat = position.coords.latitude;
                     const lng = position.coords.longitude;
-                    inputGps.value = https://maps.google.com/?q=${lat},${lng};
+                    inputGps.value = `https://maps.google.com/?q=${lat},${lng}`;
                 },
                 (error) => {
                     alert("Gagal mengambil GPS. Pastikan izin lokasi aktif.");
@@ -344,7 +344,7 @@
         }
 
         async function muatDataGSheet() {
-            const url = https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json;
+            const url = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json`;
             try {
                 const res = await fetch(url);
                 const text = await res.text();
@@ -362,7 +362,7 @@
                             let y = match[1];
                             let m = String(parseInt(match[2]) + 1).padStart(2, '0');
                             let d = String(match[3]).padStart(2, '0');
-                            tglFormatted = ${y}-${m}-${d};
+                            tglFormatted = `${y}-${m}-${d}`;
                         }
                     } else if (typeof rawTgl === 'string' && rawTgl.length >= 10) {
                         tglFormatted = rawTgl.substring(0, 10);
@@ -388,7 +388,7 @@
                 isiDropdownFilter(semuaDataAktivitas);
             } catch (e) {
                 console.error("Gagal memuat data", e);
-                document.getElementById('daftar-aktivitas').innerHTML = <p class="text-xs text-red-500 text-center py-4">Gagal memuat data. Periksa koneksi atau izin spreadsheet.</p>;
+                document.getElementById('daftar-aktivitas').innerHTML = `<p class="text-xs text-red-500 text-center py-4">Gagal memuat data. Periksa koneksi atau izin spreadsheet.</p>`;
             }
         }
 
@@ -404,7 +404,7 @@
             const petugasUnik = [...new Set(data.map(d => d.karyawan).filter(Boolean))];
             document.getElementById('stat-petugas').innerText = petugasUnik.length;
 
-            document.getElementById('jumlah-catatan').innerText = ${data.length} catatan ditemukan;
+            document.getElementById('jumlah-catatan').innerText = `${data.length} catatan ditemukan`;
 
             let htmlRingkasan = "";
             cabangUnik.forEach((cab, index) => {
@@ -422,12 +422,12 @@
                     </div>
                 `;
             });
-            document.getElementById('ringkasan-cabang').innerHTML = htmlRingkasan || <p class="text-xs text-slate-400">Belum ada data cabang.</p>;
+            document.getElementById('ringkasan-cabang').innerHTML = htmlRingkasan || `<p class="text-xs text-slate-400">Belum ada data cabang.</p>`;
 
             let htmlCard = "";
             data.forEach(d => {
                 let inisial = d.karyawan ? d.karyawan.substring(0, 2).toUpperCase() : "TM";
-                let formatNoHp = d.noHp ? <p>📞 <a href="tel:${d.noHp}" class="text-violet-600 font-bold underline">${d.noHp}</a></p> : '';
+                let formatNoHp = d.noHp ? `<p>📞 <a href="tel:${d.noHp}" class="text-violet-600 font-bold underline">${d.noHp}</a></p>` : '';
                 
                 // Judul kartu diprioritaskan Nama Mitra, jika kosong pakai Nama Majelis, jika kosong pakai Jenis Aktivitas
                 let judulUtama = d.namaMitra || d.namaMajelis || d.jenisAktivitas || 'Aktivitas Lapangan';
@@ -449,34 +449,34 @@
                             <div class="space-y-1 overflow-hidden">
                                 <h4 class="font-bold text-slate-800 text-sm truncate">${judulUtama}</h4>
                                 <div class="text-[11px] text-slate-500 space-y-0.5">
-                                    <p class="truncate">🏢 Cabang: <span class="font-medium text-slate-700">${d.cabang || '-'}</span> ${d.area ? • Area: ${d.area} : ''}</p>
-                                    ${d.idLoan ? <p>💳 ID Loan: <span class="font-medium text-slate-700">${d.idLoan}</span></p> : ''}
-                                    ${d.namaMajelis ? <p class="truncate">🏠 Majelis: ${d.namaMajelis}</p> : ''}
-                                    ${d.keterangan ? <p class="italic text-slate-600">"${d.keterangan}"</p> : ''}
+                                    <p class="truncate">🏢 Cabang: <span class="font-medium text-slate-700">${d.cabang || '-'}</span> ${d.area ? `• Area: ${d.area}` : ''}</p>
+                                    ${d.idLoan ? `<p>💳 ID Loan: <span class="font-medium text-slate-700">${d.idLoan}</span></p>` : ''}
+                                    ${d.namaMajelis ? `<p class="truncate">🏠 Majelis: ${d.namaMajelis}</p>` : ''}
+                                    ${d.keterangan ? `<p class="italic text-slate-600">"${d.keterangan}"</p>` : ''}
                                     ${formatNoHp}
-                                    ${d.lokasiGps ? <p class="pt-1"><a href="${d.lokasiGps}" target="_blank" class="text-violet-600 underline font-semibold flex items-center gap-1">📍 Buka Titik Lokasi GPS</a></p> : ''}
+                                    ${d.lokasiGps ? `<p class="pt-1"><a href="${d.lokasiGps}" target="_blank" class="text-violet-600 underline font-semibold flex items-center gap-1">📍 Buka Titik Lokasi GPS</a></p>` : ''}
                                 </div>
                             </div>
                             <div class="w-20 h-20 bg-slate-200 rounded-xl overflow-hidden flex-shrink-0 border border-slate-200 shadow-inner">
-                                ${d.fotoUrl ? <img src="${d.fotoUrl}" class="w-full h-full object-cover"> : <div class="w-full h-full flex items-center justify-center text-[10px] text-slate-400 text-center p-1">No Photo</div>}
+                                ${d.fotoUrl ? `<img src="${d.fotoUrl}" class="w-full h-full object-cover">` : `<div class="w-full h-full flex items-center justify-center text-[10px] text-slate-400 text-center p-1">No Photo</div>`}
                             </div>
                         </div>
                     </div>
                 `;
             });
-            document.getElementById('daftar-aktivitas').innerHTML = htmlCard || <p class="text-xs text-slate-400 text-center py-6">Tidak ada catatan ditemukan.</p>;
+            document.getElementById('daftar-aktivitas').innerHTML = htmlCard || `<p class="text-xs text-slate-400 text-center py-6">Tidak ada catatan ditemukan.</p>`;
         }
 
         function isiDropdownFilter(data) {
             const cabangUnik = [...new Set(data.map(d => d.cabang).filter(Boolean))];
             const karyawanUnik = [...new Set(data.map(d => d.karyawan).filter(Boolean))];
 
-            let optCabang = <option value="">Semua cabang</option>;
-            cabangUnik.forEach(c => optCabang += <option value="${c}">${c}</option>);
+            let optCabang = `<option value="">Semua cabang</option>`;
+            cabangUnik.forEach(c => optCabang += `<option value="${c}">${c}</option>`);
             document.getElementById('filter-cabang').innerHTML = optCabang;
 
-            let optKaryawan = <option value="">Semua nama</option>;
-            karyawanUnik.forEach(k => optKaryawan += <option value="${k}">${k}</option>);
+            let optKaryawan = `<option value="">Semua nama</option>`;
+            karyawanUnik.forEach(k => optKaryawan += `<option value="${k}">${k}</option>`);
             document.getElementById('filter-karyawan').innerHTML = optKaryawan;
         }
 
@@ -508,3 +508,4 @@
     </script>
 </body>
 </html>
+
