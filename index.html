@@ -13,7 +13,12 @@
 </head>
 <body class="bg-slate-50 text-slate-800 pb-12">
     <!-- Header -->
-    <header class="bg-gradient-to-r from-violet-900 to-indigo-800 text-white p-6 rounded-b-3xl shadow-lg">
+    <header class="bg-gradient-to-r from-violet-900 to-indigo-800 text-white p-6 rounded-b-3xl shadow-lg relative">
+        <!-- Teks By Razma Mirzanarko di tengah atas kecil -->
+        <div class="text-center mb-3">
+            <span class="text-[10px] text-violet-200 tracking-widest uppercase font-medium">By Razma Mirzanarko</span>
+        </div>
+
         <div class="flex justify-between items-center mb-6">
             <h1 class="text-xl font-bold">Aktivitas Area Banjar</h1>
             <button onclick="bukaForm()" class="bg-white/20 p-2.5 rounded-full hover:bg-white/30 transition shadow-inner flex items-center justify-center">
@@ -294,8 +299,8 @@
                     img.onload = function() {
                         const canvas = document.createElement('canvas');
                         const ctx = canvas.getContext('2d');
-                        const MAX_WIDTH = 150;
-                        const MAX_HEIGHT = 150;
+                        const MAX_WIDTH = 400; // Ukuran disesuaikan agar optimal
+                        const MAX_HEIGHT = 400;
                         let width = img.width;
                         let height = img.height;
 
@@ -314,7 +319,7 @@
                         canvas.width = width;
                         canvas.height = height;
                         ctx.drawImage(img, 0, 0, width, height);
-                        base64FotoFinal = canvas.toDataURL('image/jpeg', 0.4);
+                        base64FotoFinal = canvas.toDataURL('image/jpeg', 0.6);
                     }
                 }
                 reader.readAsDataURL(input.files[0]);
