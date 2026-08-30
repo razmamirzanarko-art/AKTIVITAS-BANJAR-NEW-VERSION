@@ -168,19 +168,7 @@
                         <option value="Tapin Utara">Tapin Utara</option>
                     </select>
                 </div>
-                <div>
-                    <label class="text-xs font-semibold text-slate-600">Area *</label>
-                    <select id="area" required class="w-full mt-1 p-2.5 bg-slate-50 border rounded-xl text-sm text-slate-700">
-                        <option value="">Pilih Area Banjar</option>
-                        <option value="Banjar">Banjar</option>
-                        <option value="Martapura">Martapura</option>
-                        <option value="Abarau">Abarau</option>
-                        <option value="Binuang">Binuang</option>
-                        <option value="Liang Anggang">Liang Anggang</option>
-                        <option value="Astambul">Astambul</option>
-                        <option value="Mataraman">Mataraman</option>
-                    </select>
-                </div>
+                <!-- Dropdown Area sudah dihapus di sini -->
                 <div>
                     <label class="text-xs font-semibold text-slate-600">Nama karyawan *</label>
                     <select id="karyawan" required class="w-full mt-1 p-2.5 bg-slate-50 border rounded-xl text-sm text-slate-700">
@@ -376,7 +364,6 @@
             const data = {
                 tanggal: document.getElementById('tanggal').value,
                 cabang: document.getElementById('cabang').value,
-                area: document.getElementById('area').value,
                 karyawan: document.getElementById('karyawan').value,
                 jenisAktivitas: document.getElementById('jenisAktivitas').value,
                 namaMajelis: document.getElementById('namaMajelis').value,
@@ -434,16 +421,15 @@
                     return {
                         tanggal: tglFormatted,
                         cabang: c[1]?.v || '',
-                        area: c[2]?.v || '',
-                        karyawan: c[3]?.v || '',
-                        jenisAktivitas: c[4]?.v || '',
-                        namaMajelis: c[5]?.v || '',
-                        idLoan: c[6]?.v || '',
-                        namaMitra: c[7]?.v || '',
-                        noHp: c[8]?.v || '',
-                        keterangan: c[9]?.v || '',
-                        lokasiGps: c[10]?.v || '',
-                        fotoUrl: c[11]?.v || ''
+                        karyawan: c[2]?.v || '',
+                        jenisAktivitas: c[3]?.v || '',
+                        namaMajelis: c[4]?.v || '',
+                        idLoan: c[5]?.v || '',
+                        namaMitra: c[6]?.v || '',
+                        noHp: c[7]?.v || '',
+                        keterangan: c[8]?.v || '',
+                        lokasiGps: c[9]?.v || '',
+                        fotoUrl: c[10]?.v || ''
                     };
                 }).reverse();
 
@@ -540,7 +526,7 @@
                             <div class="space-y-1 overflow-hidden flex-1">
                                 <h4 class="font-bold text-slate-800 text-sm truncate">${judulUtama}</h4>
                                 <div class="text-[11px] text-slate-500 space-y-0.5">
-                                    <p class="truncate">🏢 Cabang: <span class="font-medium text-slate-700">${d.cabang || '-'}</span> ${d.area ? `• Area: ${d.area}` : ''}</p>
+                                    <p class="truncate">🏢 Cabang: <span class="font-medium text-slate-700">${d.cabang || '-'}</span></p>
                                     ${d.idLoan ? `<p>💳 ID Loan: <span class="font-medium text-slate-700">${d.idLoan}</span></p>` : ''}
                                     ${d.namaMajelis ? `<p class="truncate">🏠 Majelis: ${d.namaMajelis}</p>` : ''}
                                     ${d.keterangan ? `<p class="italic text-slate-600">"${d.keterangan}"</p>` : ''}
@@ -594,14 +580,14 @@
             tampilkanUI(filtered);
         }
 
-    function resetFilter() {
-        document.getElementById('cari-keyword').value = "";
-        document.getElementById('filter-tanggal').value = "";
-        document.getElementById('filter-jenis-aktivitas').value = "";
-        document.getElementById('filter-cabang').value = "";
-        document.getElementById('filter-karyawan').value = "";
-        tampilkanUI(semuaDataAktivitas);
-    }
+        function resetFilter() {
+            document.getElementById('cari-keyword').value = "";
+            document.getElementById('filter-tanggal').value = "";
+            document.getElementById('filter-jenis-aktivitas').value = "";
+            document.getElementById('filter-cabang').value = "";
+            document.getElementById('filter-karyawan').value = "";
+            tampilkanUI(semuaDataAktivitas);
+        }
 
         window.onload = () => {
             muatDataGSheet();
@@ -609,4 +595,5 @@
     </script>
 </body>
 </html>
+
                                             
