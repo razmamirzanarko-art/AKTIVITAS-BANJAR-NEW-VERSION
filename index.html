@@ -168,7 +168,6 @@
                         <option value="Tapin Utara">Tapin Utara</option>
                     </select>
                 </div>
-                <!-- Dropdown Area sudah dihapus di sini -->
                 <div>
                     <label class="text-xs font-semibold text-slate-600">Nama karyawan *</label>
                     <select id="karyawan" required class="w-full mt-1 p-2.5 bg-slate-50 border rounded-xl text-sm text-slate-700">
@@ -364,6 +363,7 @@
             const data = {
                 tanggal: document.getElementById('tanggal').value,
                 cabang: document.getElementById('cabang').value,
+                area: "Banjar", // Diset default aman agar Google Sheets tidak error
                 karyawan: document.getElementById('karyawan').value,
                 jenisAktivitas: document.getElementById('jenisAktivitas').value,
                 namaMajelis: document.getElementById('namaMajelis').value,
@@ -421,15 +421,16 @@
                     return {
                         tanggal: tglFormatted,
                         cabang: c[1]?.v || '',
-                        karyawan: c[2]?.v || '',
-                        jenisAktivitas: c[3]?.v || '',
-                        namaMajelis: c[4]?.v || '',
-                        idLoan: c[5]?.v || '',
-                        namaMitra: c[6]?.v || '',
-                        noHp: c[7]?.v || '',
-                        keterangan: c[8]?.v || '',
-                        lokasiGps: c[9]?.v || '',
-                        fotoUrl: c[10]?.v || ''
+                        area: c[2]?.v || '',       // Kolom area di-skip di form, tapi dibaca agar data lain tidak geser
+                        karyawan: c[3]?.v || '',
+                        jenisAktivitas: c[4]?.v || '',
+                        namaMajelis: c[5]?.v || '',
+                        idLoan: c[6]?.v || '',
+                        namaMitra: c[7]?.v || '',
+                        noHp: c[8]?.v || '',
+                        keterangan: c[9]?.v || '',
+                        lokasiGps: c[10]?.v || '',
+                        fotoUrl: c[11]?.v || ''
                     };
                 }).reverse();
 
@@ -595,5 +596,3 @@
     </script>
 </body>
 </html>
-
-                                            
