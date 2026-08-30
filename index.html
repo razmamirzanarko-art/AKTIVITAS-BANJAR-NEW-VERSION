@@ -77,9 +77,30 @@
             
             <input type="text" id="cari-keyword" placeholder="Mitra, majelis, ID loan, nama..." oninput="filterData()" class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl text-sm outline-none focus:border-violet-600">
             
-            <div>
-                <label class="text-[11px] font-semibold text-slate-500 mb-1 block">Filter Berdasarkan Tanggal:</label>
-                <input type="date" id="filter-tanggal" onchange="filterData()" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-700 outline-none focus:border-violet-600">
+            <div class="grid grid-cols-2 gap-2">
+                <div>
+                    <label class="text-[11px] font-semibold text-slate-500 mb-1 block">Filter Tanggal:</label>
+                    <input type="date" id="filter-tanggal" onchange="filterData()" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-700 outline-none focus:border-violet-600">
+                </div>
+                <div>
+                    <label class="text-[11px] font-semibold text-slate-500 mb-1 block">Jenis Aktivitas:</label>
+                    <select id="filter-jenis-aktivitas" onchange="filterData()" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-600 outline-none focus:border-violet-600">
+                        <option value="">Semua jenis</option>
+                        <option value="RF pelayanan">RF pelayanan</option>
+                        <option value="UK">UK</option>
+                        <option value="SOSIASLIASI">SOSIASLIASI</option>
+                        <option value="UK VALIDASI">UK VALIDASI</option>
+                        <option value="HV DPD 1-7">HV DPD 1-7</option>
+                        <option value="HV DPD 8-14">HV DPD 8-14</option>
+                        <option value="HV DPD 15-30">HV DPD 15-30</option>
+                        <option value="HV DPD 31-90">HV DPD 31-90</option>
+                        <option value="HV 90+">HV 90+</option>
+                        <option value="HV NEW PAR">HV NEW PAR</option>
+                        <option value="Door To Door">Door To Door</option>
+                        <option value="VISIT SL">VISIT SL</option>
+                        <option value="VISIT DO">VISIT DO</option>
+                    </select>
+                </div>
             </div>
 
             <div class="grid grid-cols-2 gap-2">
@@ -437,14 +458,13 @@
         function normalisasiTanggal(tglStr) {
             if (!tglStr) return "";
             let s = tglStr.toString().trim().substring(0, 10);
-            // Ubah format DD/MM/YYYY atau format lain menjadi YYYY-MM-DD agar seragam
             if (s.includes('/')) {
                 let parts = s.split('/');
                 if (parts.length === 3) {
                     if (parts[0].length === 4) {
-                        return `${parts[0]}-${parts[1]}-${parts[2]}`; // YYYY/MM/DD
+                        return `${parts[0]}-${parts[1]}-${parts[2]}`;
                     } else {
-                        return `${parts[2]}-${parts[1]}-${parts[0]}`; // DD/MM/YYYY -> YYYY-MM-DD
+                        return `${parts[2]}-${parts[1]}-${parts[0]}`;
                     }
                 }
             }
@@ -454,7 +474,6 @@
         function tampilkanUI(data) {
             document.getElementById('stat-total').innerText = data.length;
             
-            // Hitung aktivitas hari ini secara akurat dengan normalisasi format tanggal
             const now = new Date();
             const year = now.getFullYear();
             const month = String(now.getMonth() + 1).padStart(2, '0');
@@ -554,33 +573,35 @@
 
         function filterData() {
             const keyword = document.getElementById('cari-keyword').value.toLowerCase();
-            const tglFilter = document.getElementById('filter-tanggal').value; // Format input date: YYYY-MM-DD
+            const tglFilter = document.getElementById('filter-tanggal').value;
+            const jenisFilter = document.getElementById('filter-jenis-aktivitas').value;
             const cabang = document.getElementById('filter-cabang').value;
             const karyawan = document.getElementById('filter-karyawan').value;
 
             let filtered = semuaDataAktivitas.filter(d => {
                 let matchKeyword = (d.namaMitra + d.namaMajelis + d.idLoan + d.keterangan + d.karyawan + d.jenisAktivitas).toLowerCase().includes(keyword);
                 
-                // Perbandingan tanggal yang sudah dinormalisasi agar aman dari perbedaan format
                 let tglDataNorm = normalisasiTanggal(d.tanggal);
                 let matchTanggal = tglFilter === "" || tglDataNorm === tglFilter;
 
+                let matchJenis = jenisFilter === "" || d.jenisAktivitas === jenisFilter;
                 let matchCabang = cabang === "" || d.cabang === cabang;
                 let matchKaryawan = karyawan === "" || d.karyawan === karyawan;
                 
-                return matchKeyword && matchTanggal && matchCabang && matchKaryawan;
+                return matchKeyword && matchTanggal && matchJenis && matchCabang && matchKaryawan;
             });
 
             tampilkanUI(filtered);
         }
 
-        function resetFilter() {
-            document.getElementById('cari-keyword').value = "";
-            document.getElementById('filter-tanggal').value = "";
-            document.getElementById('filter-cabang').value = "";
-            document.getElementById('filter-karyawan').value = "";
-            tampilkanUI(semuaDataAktivitas);
-        }
+    function resetFilter() {
+        document.getElementById('cari-keyword').value = "";
+        document.getElementById('filter-tanggal').value = "";
+        document.getElementById('filter-jenis-aktivitas').value = "";
+        document.getElementById('filter-cabang').value = "";
+        document.getElementById('filter-karyawan').value = "";
+        tampilkanUI(semuaDataAktivitas);
+    }
 
         window.onload = () => {
             muatDataGSheet();
@@ -588,3 +609,4 @@
     </script>
 </body>
 </html>
+                                            
